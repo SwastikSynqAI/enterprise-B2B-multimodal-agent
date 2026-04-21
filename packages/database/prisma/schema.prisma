@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Data Engine ───────────────────────────────────────────────
+
+model DataSource {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      String
+  url       String?
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model DataArticle {
+  id          String    @id @default(cuid())
+  url         String    @unique
+  title       String
+  content     String?
+  source      String
+  tags        String
+  publishedAt DateTime?
+  ingestedAt  DateTime  @default(now())
+}
+
+model DataIngestionRun {
+  id           String    @id @default(cuid())
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+  articlesNew  Int       @default(0)
+  articlesDupe Int       @default(0)
+  errors       String?
+}
+
+// ─── Prediction Engine ─────────────────────────────────────────
+
+model PredictionRun {
+  id          String              @id @default(cuid())
+  runAt       DateTime            @default(now())
+  predictions CompanyPrediction[]
+}
+
+model PredictionCompany {
+  id            String              @id @default(cuid())
+  name          String
+  domain        String?
+  industry      String?
+  geography     String?
+  employeeCount Int?
+  predictions   CompanyPrediction[]
+  signals       CompanySignal[]
+  leads         BDLead[]
+}
+
+model CompanySignal {
+  id         String            @id @default(cuid())
+  company    PredictionCompany @relation(fields: [companyId], references: [id])
+  companyId  String
+  type       String
+  source     String
+  detectedAt DateTime          @default(now())
+}
+
+model CompanyPrediction {
+  id             String            @id @default(cuid())
+  run            PredictionRun     @relation(fields: [runId], references: [id])
+  runId          String
+  company        PredictionCompany @relation(fields: [companyId], references: [id])
+  companyId      String
+  predictionType String
+  score          Float
+  horizon        Int
+  signals        String
+}
+
+// ─── BD Engine ─────────────────────────────────────────────────
+
+model BDLead {
+  id             String            @id @default(cuid())
+  company        PredictionCompany @relation(fields: [companyId], references: [id])
+  companyId      String
+  firstName      String?
+  lastName       String?
+  email          String?
+  linkedinUrl    String?
+  title          String?
+  enrichedAt     DateTime?
+  outreachEvents OutreachEvent[]
+  createdAt      DateTime          @default(now())
+}
+
+model OutreachEvent {
+  id       String   @id @default(cuid())
+  lead     BDLead   @relation(fields: [leadId], references: [id])
+  leadId   String
+  channel  String
+  type     String
+  status   String
+  sentAt   DateTime @default(now())
+  template String?
+}
+
+// ─── GTM Engine ────────────────────────────────────────────────
+
+model GTMRun {
+  id             String           @id @default(cuid())
+  runAt          DateTime         @default(now())
+  blogDrafts     GTMBlogDraft[]
+  linkedInDrafts GTMLinkedInDraft[]
+}
+
+model GTMBlogDraft {
+  id        String   @id @default(cuid())
+  run       GTMRun   @relation(fields: [runId], references: [id])
+  runId     String
+  title     String
+  content   String
+  keyword   String?
+  status    String   @default("pending_approval")
+  createdAt DateTime @default(now())
+}
+
+model GTMLinkedInDraft {
+  id        String   @id @default(cuid())
+  run       GTMRun   @relation(fields: [runId], references: [id])
+  runId     String
+  content   String
+  status    String   @default("pending_approval")
+  createdAt DateTime @default(now())
+}
+
+// ─── Monitoring ────────────────────────────────────────────────
+
+model MonitoringReport {
+  id            String   @id @default(cuid())
+  runAt         DateTime @default(now())
+  overallStatus String
+  checks        String
+}
+
+// ─── Super Agent ───────────────────────────────────────────────
+
+model MessageTemplate {
+  id        String   @id @default(cuid())
+  channel   String   @unique
+  content   String
+  updatedAt DateTime @updatedAt
+}
+
+model AgentRun {
+  id          String          @id @default(cuid())
+  trigger     String
+  startedAt   DateTime        @default(now())
+  completedAt DateTime?
+  decisions   AgentDecision[]
+}
+
+model AgentDecision {
+  id         String   @id @default(cuid())
+  run        AgentRun @relation(fields: [runId], references: [id])
+  runId      String
+  action     String
+  parameters String
+  rationale  String
+  decidedAt  DateTime @default(now())
+}
