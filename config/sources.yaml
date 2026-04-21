@@ -1,0 +1,13 @@
+sources:
+  hackernews: true
+  newsapi: false
+  gnews: false
+  sec_edgar: false
+  finnhub: false
+  alpha_vantage: false
+  opencorporates: false
+  rss_feeds:
+    - url: "https://techcrunch.com/feed/"
+      tags: ["funding", "expansion"]
+    - url: "https://feeds.feedburner.com/entrepreneur/latest"
+      tags: ["hiring", "growth"]

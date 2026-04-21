@@ -1,0 +1,11 @@
+company:
+  industries: ["SaaS", "Fintech", "Logistics", "E-commerce"]
+  employee_range: [50, 500]
+  geographies: ["India", "Southeast Asia", "US"]
+  signals: ["hiring_surge", "funding_round", "market_expansion", "new_office"]
+
+personas:
+  - title: "Head of Operations"
+  - title: "VP Finance"
+  - title: "Chief of Staff"
+  - title: "COO"

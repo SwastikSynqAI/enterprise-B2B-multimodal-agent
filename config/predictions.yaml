@@ -1,0 +1,14 @@
+prediction_types:
+  - name: MARKET_EXPANSION
+    description: "Company showing signs of entering new markets"
+    signals: ["new_office", "hiring_surge", "funding"]
+    weight: 0.4
+  - name: BUYING_INTENT
+    description: "Company actively evaluating vendors"
+    signals: ["job_posting_vendor", "budget_cycle", "rfp_signal"]
+    weight: 0.6
+
+scoring:
+  horizons: [30, 60, 90]
+  min_score_threshold: 0.45
+  top_n: 50

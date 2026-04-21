@@ -1,0 +1,14 @@
+linkedin:
+  daily_connection_limit: 20
+  enabled: false
+  connection_request: "Hi {{first_name}}, noticed {{company}} is {{signal_context}}. Would love to connect."
+  follow_up_days: 5
+  follow_up: "Hi {{first_name}}, following up on my earlier message. Happy to share how we've helped similar companies."
+
+email:
+  enabled: false
+  from_name: "{{your_name}}"
+  from_email: "{{your_email}}"
+  subject: "Quick note for {{company}}"
+  body_template: "templates/email-intro.html"
+  follow_up_days: 3
