@@ -1,6 +1,6 @@
 import { input, select, confirm, password } from '@inquirer/prompts'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
-import { resolve } from 'path'
+import { resolve, join } from 'path'
 import chalk from 'chalk'
 import yaml from 'js-yaml'
 
@@ -132,7 +132,7 @@ async function main() {
     smtpPass ? `SMTP_PASS=${smtpPass}` : '',
     fromName ? `EMAIL_FROM_NAME=${fromName}` : '',
     fromEmail ? `EMAIL_FROM_ADDRESS=${fromEmail}` : '',
-    'DATABASE_URL=file:/Users/synqwork/enterprise-bd-os/data/bd.db',
+    `DATABASE_URL=file:${join(process.cwd(), 'data', 'bd.db')}`,
   ].filter(Boolean).join('\n')
   writeFileSync('.env', envLines)
 
